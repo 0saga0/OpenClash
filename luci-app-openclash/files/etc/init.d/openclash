@@ -320,7 +320,7 @@ yml_provider_path()
 	    	 if [ -n "$(sed -n "${n}p" "$1" |grep "^ \{0,\}#")" ]; then
       	    continue
       	 fi
-         provider_path=$(sed -n "${n}p" "$1" |sed "s/\'//g" |sed 's/\"//g' |awk -F 'path:' '{print $2}' 2>/dev/null |sed 's/,.*//' 2>/dev/null |sed 's/^ \{0,\}//g' 2>/dev/null |sed 's/ \{0,\}$//g' 2>/dev/null |sed 's/ \{0,\}\}\{0,\}$//g' 2>/dev/null)
+         provider_path=$(sed -n "${n}p" "$1" |sed "s/\'//g" |sed 's/\"//g' |awk -F 'path:' '{print $2}' 2>/dev/null |awk -F '#' '{print $1}' 2>/dev/null |sed 's/,.*//' 2>/dev/null |sed 's/^ \{0,\}//g' 2>/dev/null |sed 's/ \{0,\}$//g' 2>/dev/null |sed 's/ \{0,\}\}\{0,\}$//g' 2>/dev/null)
          if [ -z "$(echo "$provider_path" |grep "$2")" ]; then
             provider_name=$(echo "$provider_path" |awk -F '/' '{print $NF}')
             sed -i "s#path: ${provider_path}#path: ./${2}/${provider_name}#" "$1" 2>/dev/null
@@ -347,7 +347,7 @@ if [ -n "$provider_path_line" ]; then
       	 if [ -n "$(sed -n "${n}p" "$1" |grep "^ \{0,\}#")" ]; then
       	    continue
       	 fi
-         provider_path=$(sed -n "${n}p" "$1" |sed "s/\'//g" |sed 's/\"//g' |awk -F 'path:' '{print $2}' 2>/dev/null |sed 's/,.*//' 2>/dev/null |sed 's/^ \{0,\}//g' 2>/dev/null |sed 's/ \{0,\}$//g' 2>/dev/null |sed 's/ \{0,\}\}\{0,\}$//g' 2>/dev/null)
+         provider_path=$(sed -n "${n}p" "$1" |sed "s/\'//g" |sed 's/\"//g' |awk -F 'path:' '{print $2}' 2>/dev/null |awk -F '#' '{print $1}' 2>/dev/null |sed 's/,.*//' 2>/dev/null |sed 's/^ \{0,\}//g' 2>/dev/null |sed 's/ \{0,\}$//g' 2>/dev/null |sed 's/ \{0,\}\}\{0,\}$//g' 2>/dev/null)
          if [ "$(echo "${provider_path:0:1}")" = "." ]; then
             provider_path_check="/etc/openclash/$(echo ${provider_path:2})"
             if [ -f "$provider_path_check" ] && [ "$2" = "proxy_provider" ]; then
@@ -811,7 +811,7 @@ yml_get_rule_provider()
 	if [ -n "$config" ] && [ "$config" != "$CONFIG_NAME" ] && [ "$config" != "all" ]; then
 		return
 	fi
-   
+
 	if [ -z "$group" ]; then
 		return
 	fi
@@ -1060,6 +1060,14 @@ do_run_core()
     
     if [ ! -f "/etc/openclash/clash" ] && [ -f "/etc/openclash/core/clash" ] && [ -z "$core_type" ]; then
        ln -s /etc/openclash/core/clash /etc/openclash/clash 2>/dev/null
+    fi
+    
+    if [ ! -f "/etc/openclash/clash" ] && [ -f "/etc/openclash/core/clash_tun" ] && [ "$core_type" != "Game" ]; then
+       ln -s /etc/openclash/core/clash_tun /etc/openclash/clash 2>/dev/null
+    fi
+    
+    if [ ! -f "/etc/openclash/clash" ] && [ -f "/etc/openclash/core/clash_game" ] && [ "$core_type" != "Tun" ]; then
+       ln -s /etc/openclash/core/clash_game /etc/openclash/clash 2>/dev/null
     fi
 
 #权限检查
