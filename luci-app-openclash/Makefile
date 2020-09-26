@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-openclash
-PKG_VERSION:=0.40.4
+PKG_VERSION:=0.40.6
 PKG_RELEASE:=beta
 PKG_MAINTAINER:=vernesong <https://github.com/vernesong/OpenClash>
 
@@ -53,14 +53,13 @@ endef
 
 define Package/$(PKG_NAME)/preinst
 #!/bin/sh
+if [ -f "/etc/config/openclash" ]; then
 	cp "/etc/config/openclash" "/tmp/openclash.bak" >/dev/null 2>&1
 	cp -r "/etc/openclash" "/tmp/openclash" >/dev/null 2>&1
+fi
 endef
 
 define Package/$(PKG_NAME)/postinst
-#!/bin/sh
-	uci set openclash.config.enable=0 >/dev/null 2>&1
-	uci commit openclash >/dev/null 2>&1
 endef
 
 define Package/$(PKG_NAME)/prerm

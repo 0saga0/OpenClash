@@ -15,7 +15,7 @@ if [ "$CKTIME" != "$(grep "CheckTime" $LAST_OPVER 2>/dev/null |awk -F ':' '{prin
    if pidof clash >/dev/null; then
       curl -sL --connect-timeout 10 --retry 2 -x http://$PROXY_ADDR:$HTTP_PORT -U "$PROXY_AUTH" "$VERSION_URL" -o $LAST_OPVER >/dev/null 2>&1
    else
-      curl -sL --connect-timeout 10 --retry 2 "$VERSION_URL" -o $LAST_OPVER >/dev/null 2>&1
+      curl -sL --connect-timeout 10 --retry 2 https://cdn.jsdelivr.net/gh/vernesong/OpenClash@master/version -o $LAST_OPVER >/dev/null 2>&1
    fi
    if [ "$?" -eq "0" ] && [ -s "$LAST_OPVER" ]; then
    	  OP_LV=$(sed -n 1p $LAST_OPVER 2>/dev/null |awk -F '-' '{print $1}' |awk -F 'v' '{print $2}' |awk -F '.' '{print $2$3}' 2>/dev/null)
